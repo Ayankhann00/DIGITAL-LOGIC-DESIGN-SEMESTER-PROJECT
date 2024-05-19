@@ -1,197 +1,107 @@
-# DIGITAL-LOGIC-DESIGN-SEMESTER-PROJECT
-THIS IS THE HOME AUTOMATION PROJECT USING ESP32 AND ALEXA ECO DOT.
-#include <WiFi.h>
-#include <Espalexa.h>
+# 🌟 Home Automation System with ESP32 and Alexa Echo Dot 🌟
 
-Espalexa espalexa;
+![Home Automation](https://img.shields.io/badge/Home%20Automation-ESP32%20%2B%20Alexa-blueviolet)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-Active-brightgreen)
 
-#define RelayPin1 27  // D27
-#define RelayPin2 26  // D26
-#define RelayPin3 25  // D25
-#define RelayPin4 33  // D33
-#define RelayPin5 32  // D32
+Welcome to the Home Automation System project! This project enables you to control home appliances using an ESP32 microcontroller and voice commands via Amazon Alexa Echo Dot.
 
-// WiFi Credentials
-const char* ssid = "gp4";
-const char* password = "hunza123";
+ Table of Contents
 
-// Device names
-String Device_1_Name = "Room 1";
-String Device_2_Name = "Room 2";
-String Device_3_Name = "Room 3";
-String Device_4_Name = "Room 4";
-String Device_5_Name = "Charging Switch";
+- [Introduction](#introduction)
+- [Features](#features)
+- [Demo](#demo)
+- [Hardware Requirements](#hardware-requirements)
+- [Software Requirements](#software-requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
+- [Contributing](#contributing)
+- [Acknowledgments](#acknowledgments)
 
-// WiFi LED pin
-#define wifiLed 2 // D2
+1. Introduction
 
-boolean wifiConnected = false;
+This project integrates an ESP32 microcontroller with Amazon Alexa to create a voice-controlled home automation system. Using the Alexa Skills Kit (ASK) and AWS IoT, you can control various home appliances seamlessly.
 
-// Callback functions for device control
-void firstLightChanged(uint8_t brightness) {
-  // Control the device connected to RelayPin1
-  if (brightness == 255) {
-    digitalWrite(RelayPin1, LOW);
-    Serial.println("Bedroom Lamp ON");
-  } else {
-    digitalWrite(RelayPin1, HIGH);
-    Serial.println("Bedroom Lamp OFF");
-  }
-}
+2. Features
 
-void secondLightChanged(uint8_t brightness) {
-  // Control the device connected to RelayPin2
-  if (brightness == 255) {
-    digitalWrite(RelayPin2, LOW);
-    Serial.println("Desk Lamp ON");
-  } else {
-    digitalWrite(RelayPin2, HIGH);
-    Serial.println("Desk Lamp OFF");
-  }
-}
+- 🔌 **Voice Control**: Control home appliances using simple voice commands.
+- 🌐 **Remote Access**: Manage your devices from anywhere via Wi-Fi.
+- ⚡ **Easy Setup**: Quick and straightforward installation process.
+- 🛠️ **Customizable**: Easily extend and modify the project to suit your needs.
 
-void thirdLightChanged(uint8_t brightness) {
-  // Control the device connected to RelayPin3
-  if (brightness == 255) {
-    digitalWrite(RelayPin3, LOW);
-    Serial.println("Ceiling Light ON");
-  } else {
-    digitalWrite(RelayPin3, HIGH);
-    Serial.println("Ceiling Light OFF");
-  }
-}
+3. Demo
 
-void fourthLightChanged(uint8_t brightness) {
-  // Control the device connected to RelayPin4
-  if (brightness == 255) {
-    digitalWrite(RelayPin4, LOW);
-    Serial.println("Floor Lamp ON");
-  } else {
-    digitalWrite(RelayPin4, HIGH);
-    Serial.println("Floor Lamp OFF");
-  }
-}
+![Home Automation Demo](demo.gif)
 
-void fifthLightChanged(uint8_t brightness) {
-  // Control the device connected to RelayPin5
-  if (brightness == 255) {
-    digitalWrite(RelayPin5, LOW);
-    Serial.println("Charging Switch ON");
-  } else {
-    digitalWrite(RelayPin5, HIGH);
-    Serial.println("Charging Switch OFF");
-  }
-}
+## Hardware Requirements
 
-boolean connectWifi() {
-  boolean state = true;
-  int i = 0;
+- **ESP32 Microcontroller**
+- **Relay Module** (for controlling appliances)
+- **Amazon Alexa Echo Dot**
+- **Jumper Wires** and **Breadboard**
+- **Home Appliances** (e.g., lights, fans)
 
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  Serial.println("");
-  Serial.println("Connecting to WiFi");
+4.## Software Requirements
 
-  // Wait for connection
-  Serial.print("Connecting...");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-    if (i > 20) {
-      state = false;
-      break;
-    }
-    i++;
-  }
-  Serial.println("");
-  if (state) {
-    Serial.print("Connected to ");
-    Serial.println(ssid);
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
-  } else {
-    Serial.println("Connection failed.");
-  }
-  return state;
-}
+- **Arduino IDE**
+- **ESP32 Board Support** for Arduino IDE
+- **Amazon Developer Account** (for Alexa Skill)
+- **AWS Account** (for AWS IoT)
 
-void addDevices() {
-  espalexa.addDevice(Device_1_Name, firstLightChanged);
-  espalexa.addDevice(Device_2_Name, secondLightChanged);
-  espalexa.addDevice(Device_3_Name, thirdLightChanged);
-  espalexa.addDevice(Device_4_Name, fourthLightChanged);
-  espalexa.addDevice(Device_5_Name, fifthLightChanged); // Adding the fifth device
-  espalexa.begin();
-}
+5. ## Installation
 
-void setup() {
-  Serial.begin(115200);
+### 1. Set up ESP32 with Arduino IDE
 
-  pinMode(RelayPin1, OUTPUT);
-  pinMode(RelayPin2, OUTPUT);
-  pinMode(RelayPin3, OUTPUT);
-  pinMode(RelayPin4, OUTPUT);
-  pinMode(RelayPin5, OUTPUT); // Initialize the new relay pin
+1. Install the [Arduino IDE](https://www.arduino.cc/en/software).
+2. Set up the ESP32 board in Arduino IDE. Follow the [ESP32 setup guide](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html).
 
-  pinMode(wifiLed, OUTPUT);  
+6. Clone this Repository
 
-  digitalWrite(RelayPin1, HIGH);
-  digitalWrite(RelayPin2, HIGH);
-  digitalWrite(RelayPin3, HIGH);
-  digitalWrite(RelayPin4, HIGH);
-  digitalWrite(RelayPin5, HIGH); // Ensure all relays are initially off
+```bash
+git clone https://github.com/yourusername/home-automation-esp32-alexa.git
+cd home-automation-esp32-alexa
 
-  wifiConnected = connectWifi();
+Install Required Libraries
+Open Arduino IDE and install the following libraries via the Library Manager:
+•	ESP DEV
+•	AsyncTCP
+•	ArduinoJson
+. Set Up AWS IoT
+1.	Create an AWS account if you don't have one.
+2.	Set up AWS IoT and create a new Thing. Follow the AWS IoT setup guide.
+3.	Download the security certificates for the Thing.
+4.	Attach an IoT policy to the Thing.
+ Configure Alexa Skill
+1.	Create an Amazon Developer account if you don't have one.
+2.	Create a new Alexa Skill. Follow the Alexa Skills Kit guide.
+3.	Set up the endpoint for your skill to interact with AWS IoT.
+. Flash the ESP32
+1.	Open the home_automation.ino file in Arduino IDE.
+2.	Modify the config.h file with your Wi-Fi credentials, AWS IoT endpoint, and security certificate details.
+3.	Connect the ESP32 to your computer and upload the sketch.
+Configuration
+1.	Wi-Fi Configuration: Ensure the ESP32 is connected to your Wi-Fi network.
+2.	AWS IoT Configuration: Update the config.h file with the AWS IoT endpoint and certificates.
+3.	Alexa Skill Configuration: Ensure the Alexa skill is properly configured to communicate with your AWS IoT endpoint.
+Usage
+1.	Plug in the ESP32 and ensure it connects to your Wi-Fi network.
+2.	Use the Alexa app to discover new devices.
+3.	Once the ESP32 is discovered, you can control the connected appliances using voice commands, such as:
+o	"Alexa, turn on the light."
+o	"Alexa, turn off the fan."
+Troubleshooting
+•	ESP32 not connecting to Wi-Fi: Ensure the Wi-Fi credentials in config.h are correct.
+•	Alexa not discovering devices: Ensure the skill is correctly configured and the ESP32 is online.
+•	AWS IoT connection issues: Verify the security certificates and endpoint details.
+License
+This project is licensed under the MIT License. See the LICENSE file for more details.
+Contributions
+HAMZOO0 AYAANKHANN0
 
-  if (wifiConnected) {
-    addDevices();
-  } else {
-    Serial.println("Cannot connect to WiFi. So in Manual Mode");
-    delay(1000);
-  }
-}
+Conclusions:
+This Home Automation System project, leveraging the ESP32 microcontroller and Amazon Alexa Echo Dot, offers an efficient and modern way to control home appliances through voice commands. By integrating IoT technology with Alexa's voice capabilities, users can easily manage their devices, enhancing convenience and functionality in their daily lives. We hope this project serves as a valuable guide and inspires further innovation in smart home technology. Happy automating!
 
-void loop() {
-  if (WiFi.status() != WL_CONNECTED) {
-    digitalWrite(wifiLed, LOW);
-  } else {
-    digitalWrite(wifiLed, HIGH);
-    if (wifiConnected) {
-      espalexa.loop();
-    } else {
-      wifiConnected = connectWifi();
-      if (wifiConnected) {
-        addDevices();
-      }
-    }
-  }
 
-  // Check for Serial input
-  if (Serial.available() > 0) {
-    String input = Serial.readStringUntil('\n');
-    input.trim();
-
-    // Check the received command
-    if (input == "turn on all devices") {
-      turnOnAllDevices();
-    } else if (input == "turn off all devices") {
-      turnOffAllDevices();
-    }
-  }
-}
-
-void turnOnAllDevices() {
-  digitalWrite(RelayPin1, LOW);
-  digitalWrite(RelayPin2, LOW);
-  digitalWrite(RelayPin3, LOW);
-  digitalWrite(RelayPin4, LOW);
-  digitalWrite(RelayPin5, LOW);
-}
-
-void turnOffAllDevices() {
-  digitalWrite(RelayPin1, HIGH);
-  digitalWrite(RelayPin2, HIGH);
-  digitalWrite(RelayPin3, HIGH);
-  digitalWrite(RelayPin4, HIGH);
-  digitalWrite(RelayPin5, HIGH);
-}
